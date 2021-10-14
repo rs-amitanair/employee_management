@@ -68,10 +68,6 @@ public class EmployeeController {
     public boolean emailValidation(HttpServletRequest request){
         String mail=request.getParameter("email");
         Long res=employeeService.getMail(mail);
-        System.out.print(res);
-        if(res==0)
-            return true;
-        else
-            return false;
+        return (res==0)?true:false;
     }
 }

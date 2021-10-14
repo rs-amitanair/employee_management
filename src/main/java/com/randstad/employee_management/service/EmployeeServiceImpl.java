@@ -62,7 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (optional.isPresent()) {
             employee = optional.get();
         } else {
-            throw new RuntimeException(" Employee not found for id :: " + id);
+            throw new NullPointerException(" Employee not found for id :: " + id);
         }
         return convertToDTO(employee);
     }
@@ -73,7 +73,11 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void deleteEmployee(Long id) {
-        employeeRepository.deleteById(id);
+        try{
+            employeeRepository.deleteById(id);
+        }catch (Exception e){
+            System.out.print("Employee not found");
+        }
     }
 
     /**
@@ -90,6 +94,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         return countryDtoList;
     }
 
+    /**
+     *
+     * @param email
+     * @return count number of employees with that email
+     */
     @Override
     public Long getMail(String email) {
        return employeeRepository.count(email);

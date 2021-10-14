@@ -17,37 +17,13 @@
     <title>New Employee</title>
     <script type="text/javascript" src="validate.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#mail").blur(function () {
-                let enteredMail=$("#mail").val();
-                $.ajax({
-                    url:"/validateMail",
-                    method:"GET",
-                    data:"email="+enteredMail,
-                    success:function (result){
-                        if(!result){
-                            $("#emailMsg").html("This email is already registered!");
-                            $("#saveBtn").prop('disabled',true);
-                        }else{
-                            $("#emailMsg").html("");
-                            $("#saveBtn").prop('disabled',false);
-                        }
-                    },
-                    error:function () {
-                        alert("Error");
-                    }
-                })
-            });
-        });
-        </script>
 </head>
 <body>
 <div align="center">
     <h1>New Employee</h1>
     <form:form onsubmit="test()" action="saveEmployee" method="post" modelAttribute="employee">
         <table>
-            <form:hidden path="id"/>
+            <form:hidden id="id" path="id"/>
             <tr>
                 <td>First Name:</td>
                 <td><form:input id="firstName" required="required" path="firstName" maxlength="50"/></td>
@@ -85,6 +61,7 @@
                     </form:select>
                 </td>
             </tr>
+            <c:if test="${empty employee.id}">
             <tr>
                 <td>Password</td>
                 <td><form:password path="password"  required="required" id="pass" maxlength="10"/></td>
@@ -93,12 +70,36 @@
                 <td>Confirm Password</td>
                 <td><input required="required" type="password" id="conf"/></td>
             </tr>
+            </c:if>
             <tr>
                 <td colspan="2" align="center"><input id="saveBtn" type="submit" value="Save"></td>
             </tr>
         </table>
     </form:form>
 </div>
-
 </body>
 </html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#mail").blur(function () {
+            let enteredMail=$("#mail").val();
+            $.ajax({
+                url:"/validateMail",
+                method:"GET",
+                data:"email="+enteredMail,
+                success:function (result){
+                    if(!result){
+                        $("#emailMsg").html("This email is already registered!");
+                        $("#saveBtn").prop('disabled',true);
+                    }else{
+                        $("#emailMsg").html("");
+                        $("#saveBtn").prop('disabled',false);
+                    }
+                },
+                error:function () {
+                    alert("Error");
+                }
+            })
+        });
+    });
+</script>
