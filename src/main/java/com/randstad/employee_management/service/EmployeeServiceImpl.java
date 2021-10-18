@@ -13,6 +13,10 @@ import org.modelmapper.ModelMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -24,6 +28,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     private CountryRepository countryRepository;
 
     private static final ModelMapper modelMapper = new ModelMapper();
+
+    public class NoEmployeeFoundException extends Exception{
+        public NoEmployeeFoundException(String errorMsg){
+            super(errorMsg);
+        }
+    }
 
     /**
      *
@@ -57,13 +67,19 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public EmployeeDto getEmployee(Long id) {
-        Employee employee;
+        Employee employee=null;
         Optional<Employee> optional = employeeRepository.findById(id);
-        if (optional.isPresent()) {
-            employee = optional.get();
-        } else {
-            throw new NullPointerException(" Employee not found for id :: " + id);
+        LOGGER.log(Level.INFO,"Value of id ::"+id);
+        try {
+            if (optional.isPresent())
+                employee=optional.get();
+            else{
+                throw new NoEmployeeFoundException("Employee not found for entered id");
+            }
+        }catch (NoEmployeeFoundException e){
+            System.out.print(e);
         }
+
         return convertToDTO(employee);
     }
 
@@ -74,6 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(Long id) {
         try{
+            LOGGER.info("Delete Employee id ::"+id);
             employeeRepository.deleteById(id);
         }catch (Exception e){
             System.out.print("Employee not found");
@@ -101,6 +118,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public Long getMail(String email) {
+        LOGGER.info("Employee email :: "+email);
        return employeeRepository.count(email);
     }
 
